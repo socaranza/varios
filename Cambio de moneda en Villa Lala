@@ -1,0 +1,51 @@
+<script>
+
+// Desarrollado por Sebastián Ocaranza
+// Este código actualiza los precios en la página, mostrando el precio en pesos mexicanos (MXN) o dólares estadounidenses (USD)
+// según el idioma del sitio. Convierte el precio original a la moneda correspondiente y lo formatea para mostrarlo con comas.
+
+// Detectar el idioma del sitio
+const language = document.documentElement.lang || navigator.language;
+
+// Función para formatear números con comas
+function formatNumberWithCommas(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+// Función para actualizar los precios
+function updatePrices() {
+    // Seleccionar los elementos con los IDs "precio-loop" y "precio"
+    const priceElements = document.querySelectorAll('#precio-loop, #precio');
+
+    priceElements.forEach(element => {
+        // Obtener el texto original del elemento
+        let originalHtml = element.innerHTML;
+
+        // Buscar solo el precio dentro del contenido (dentro de etiquetas <span> en este caso)
+        let priceSpan = element.querySelector('span');
+        if (!priceSpan) return;
+
+        let priceText = priceSpan.textContent.replace(/[^0-9.]/g, '');
+        let price = parseFloat(priceText);
+
+        if (isNaN(price)) return; // Si no es un número, omitir
+
+        // Revisar el idioma del sitio y modificar el precio
+        if (language === 'es-MX') {
+            // Mostrar en pesos mexicanos con "MXN" antes del precio y "$" con comas
+            priceSpan.textContent = `MXN $${formatNumberWithCommas(Math.round(price))}`;
+        } else if (language === 'en-US') {
+            // Convertir a dólares y mostrar con "USD" antes del precio y "$" con comas
+            let priceInUSD = price / 20;
+            priceSpan.textContent = `USD $${formatNumberWithCommas(Math.round(priceInUSD))}`;
+        }
+    });
+}
+
+// Ejecutar la función al cargar el DOM
+document.addEventListener('DOMContentLoaded', updatePrices);
+
+
+
+
+</script>
